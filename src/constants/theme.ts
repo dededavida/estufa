@@ -1,11 +1,33 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Theme tokens for Estufa Inteligente — dark greenhouse UI.
  */
 
 import '@/global.css';
 
 import { Platform } from 'react-native';
+
+export const EstufaColors = {
+  background: '#0B0D0C',
+  surface: '#181A19',
+  surfaceElevated: '#1F2221',
+  border: '#2A2E2C',
+  primary: '#4ADE80',
+  primaryMuted: 'rgba(74, 222, 128, 0.15)',
+  primaryGlow: 'rgba(74, 222, 128, 0.35)',
+  text: '#FFFFFF',
+  textSecondary: '#9CA3AF',
+  textMuted: '#6B7280',
+  danger: '#EF4444',
+  dangerMuted: 'rgba(239, 68, 68, 0.18)',
+  temp: '#F87171',
+  humidity: '#60A5FA',
+  soil: '#4ADE80',
+  light: '#FBBF24',
+  online: '#4ADE80',
+  offline: '#EF4444',
+  switchTrackOff: '#3F3F46',
+  white: '#FFFFFF',
+} as const;
 
 export const Colors = {
   light: {
@@ -16,11 +38,11 @@ export const Colors = {
     textSecondary: '#60646C',
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    text: EstufaColors.text,
+    background: EstufaColors.background,
+    backgroundElement: EstufaColors.surface,
+    backgroundSelected: EstufaColors.surfaceElevated,
+    textSecondary: EstufaColors.textSecondary,
   },
 } as const;
 
@@ -28,13 +50,9 @@ export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
     sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
     serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
     rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
     mono: 'ui-monospace',
   },
   default: {
@@ -59,6 +77,14 @@ export const Spacing = {
   four: 24,
   five: 32,
   six: 64,
+} as const;
+
+export const Radius = {
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  full: 999,
 } as const;
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;

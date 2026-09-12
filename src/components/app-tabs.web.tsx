@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import {
   Tabs,
   TabList,
@@ -6,14 +7,41 @@ import {
   TabTriggerSlotProps,
   TabListProps,
 } from 'expo-router/ui';
-import { SymbolView } from 'expo-symbols';
-import { Pressable, useColorScheme, View, StyleSheet } from 'react-native';
+import type { Href } from 'expo-router';
+import { Pressable, Text, View, StyleSheet } from 'react-native';
 
-import { ExternalLink } from './external-link';
-import { ThemedText } from './themed-text';
-import { ThemedView } from './themed-view';
+import { EstufaColors, MaxContentWidth, Spacing } from '@/constants/theme';
 
-import { Colors, MaxContentWidth, Spacing } from '@/constants/theme';
+const TABS: {
+  name: string;
+  href: Href;
+  label: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  iconActive: keyof typeof Ionicons.glyphMap;
+}[] = [
+  { name: 'home', href: '/', label: 'Início', icon: 'home-outline', iconActive: 'home' },
+  {
+    name: 'graficos',
+    href: '/graficos',
+    label: 'Gráficos',
+    icon: 'stats-chart-outline',
+    iconActive: 'stats-chart',
+  },
+  {
+    name: 'historico',
+    href: '/historico',
+    label: 'Histórico',
+    icon: 'document-text-outline',
+    iconActive: 'document-text',
+  },
+  {
+    name: 'configuracoes',
+    href: '/configuracoes',
+    label: 'Configurações',
+    icon: 'settings-outline',
+    iconActive: 'settings',
+  },
+];
 
 export default function AppTabs() {
   return (
@@ -21,56 +49,45 @@ export default function AppTabs() {
       <TabSlot style={{ height: '100%' }} />
       <TabList asChild>
         <CustomTabList>
-          <TabTrigger name="home" href="/" asChild>
-            <TabButton>Home</TabButton>
-          </TabTrigger>
-          <TabTrigger name="explore" href="/explore" asChild>
-            <TabButton>Explore</TabButton>
-          </TabTrigger>
+          {TABS.map((tab) => (
+            <TabTrigger key={tab.name} name={tab.name} href={tab.href} asChild>
+              <TabButton icon={tab.icon} iconActive={tab.iconActive}>
+                {tab.label}
+              </TabButton>
+            </TabTrigger>
+          ))}
         </CustomTabList>
       </TabList>
     </Tabs>
   );
 }
 
-export function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
+function TabButton({
+  children,
+  isFocused,
+  icon,
+  iconActive,
+  ...props
+}: TabTriggerSlotProps & {
+  icon: keyof typeof Ionicons.glyphMap;
+  iconActive: keyof typeof Ionicons.glyphMap;
+}) {
+  const color = isFocused ? EstufaColors.primary : EstufaColors.textMuted;
+
   return (
-    <Pressable {...props} style={({ pressed }) => pressed && styles.pressed}>
-      <ThemedView
-        type={isFocused ? 'backgroundSelected' : 'backgroundElement'}
-        style={styles.tabButtonView}>
-        <ThemedText type="small" themeColor={isFocused ? 'text' : 'textSecondary'}>
-          {children}
-        </ThemedText>
-      </ThemedView>
+    <Pressable {...props} style={({ pressed }) => [styles.tabButton, pressed && styles.pressed]}>
+      <View style={[styles.tabInner, isFocused && styles.tabInnerActive]}>
+        <Ionicons name={isFocused ? iconActive : icon} size={20} color={color} />
+        <Text style={[styles.tabLabel, { color }]}>{children}</Text>
+      </View>
     </Pressable>
   );
 }
 
-export function CustomTabList(props: TabListProps) {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
-
+function CustomTabList(props: TabListProps) {
   return (
     <View {...props} style={styles.tabListContainer}>
-      <ThemedView type="backgroundElement" style={styles.innerContainer}>
-        <ThemedText type="smallBold" style={styles.brandText}>
-          Expo Starter
-        </ThemedText>
-
-        {props.children}
-
-        <ExternalLink href="https://docs.expo.dev" asChild>
-          <Pressable style={styles.externalPressable}>
-            <ThemedText type="link">Docs</ThemedText>
-            <SymbolView
-              tintColor={colors.text}
-              name={{ ios: 'arrow.up.right.square', web: 'link' }}
-              size={12}
-            />
-          </Pressable>
-        </ExternalLink>
-      </ThemedView>
+      <View style={styles.innerContainer}>{props.children}</View>
     </View>
   );
 }
@@ -79,37 +96,41 @@ const styles = StyleSheet.create({
   tabListContainer: {
     position: 'absolute',
     width: '100%',
+    bottom: 0,
     padding: Spacing.three,
-    justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
   },
   innerContainer: {
+    backgroundColor: EstufaColors.surface,
+    borderRadius: 28,
     paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.five,
-    borderRadius: Spacing.five,
+    paddingHorizontal: Spacing.two,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     flexGrow: 1,
-    gap: Spacing.two,
     maxWidth: MaxContentWidth,
+    borderWidth: 1,
+    borderColor: EstufaColors.border,
   },
-  brandText: {
-    marginRight: 'auto',
+  tabButton: {
+    flex: 1,
+  },
+  tabInner: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    paddingVertical: Spacing.two,
+    borderRadius: 20,
+  },
+  tabInnerActive: {
+    backgroundColor: EstufaColors.primaryMuted,
+  },
+  tabLabel: {
+    fontSize: 11,
+    fontWeight: '600',
   },
   pressed: {
     opacity: 0.7,
-  },
-  tabButtonView: {
-    paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    borderRadius: Spacing.three,
-  },
-  externalPressable: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: Spacing.one,
-    marginLeft: Spacing.three,
   },
 });

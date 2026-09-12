@@ -1,31 +1,41 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs';
-import { useColorScheme } from 'react-native';
 
-import { Colors } from '@/constants/theme';
+import { EstufaColors } from '@/constants/theme';
 
 export default function AppTabs() {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
-
   return (
     <NativeTabs
-      backgroundColor={colors.background}
-      indicatorColor={colors.backgroundElement}
-      labelStyle={{ selected: { color: colors.text } }}>
+      backgroundColor={EstufaColors.background}
+      indicatorColor={EstufaColors.primaryMuted}
+      tintColor={EstufaColors.primary}
+      labelStyle={{
+        default: { color: EstufaColors.textMuted },
+        selected: { color: EstufaColors.primary },
+      }}>
       <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Início</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'house', selected: 'house.fill' }} md="home" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="graficos">
+        <NativeTabs.Trigger.Label>Gráficos</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/home.png')}
-          renderingMode="template"
+          sf={{ default: 'chart.xyaxis.line', selected: 'chart.xyaxis.line' }}
+          md="show_chart"
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="explore">
-        <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
+      <NativeTabs.Trigger name="historico">
+        <NativeTabs.Trigger.Label>Histórico</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/explore.png')}
-          renderingMode="template"
+          sf={{ default: 'doc.text', selected: 'doc.text.fill' }}
+          md="description"
         />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="configuracoes">
+        <NativeTabs.Trigger.Label>Configurações</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'gearshape', selected: 'gearshape.fill' }} md="settings" />
       </NativeTabs.Trigger>
     </NativeTabs>
   );
