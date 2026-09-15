@@ -31,7 +31,12 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
+
+# ESP32 local secrets (Wi-Fi / Supabase keys)
+firmware/secrets.h
+
 
 # typescript
 *.tsbuildinfo

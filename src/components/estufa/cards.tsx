@@ -10,13 +10,20 @@ export function SensorCard({
   sensorKey,
   value,
   sparkline,
+  subtitle,
 }: {
   sensorKey: SensorKey;
-  value: number;
+  value: number | null;
   sparkline: number[];
+  subtitle?: string | null;
 }) {
   const meta = SENSOR_META[sensorKey];
-  const display = Number.isInteger(value) ? `${value}` : value.toFixed(1);
+  const display =
+    value == null || Number.isNaN(value)
+      ? '—'
+      : Number.isInteger(value)
+        ? `${value}`
+        : value.toFixed(1);
 
   return (
     <View style={styles.sensorCard}>
@@ -28,8 +35,9 @@ export function SensorCard({
       </View>
       <Text style={styles.sensorValue}>
         {display}
-        <Text style={styles.sensorUnit}> {meta.unit}</Text>
+        {value != null ? <Text style={styles.sensorUnit}> {meta.unit}</Text> : null}
       </Text>
+      {subtitle ? <Text style={styles.sensorSubtitle}>{subtitle}</Text> : null}
       <Sparkline data={sparkline} color={meta.color} />
     </View>
   );
@@ -49,9 +57,15 @@ export function EquipmentQuickCard({
   const meta = EQUIPMENT_META[id];
 
   return (
-    <Pressable style={styles.equipCard} onPress={onPress}>
-      <View style={[styles.equipIcon, { backgroundColor: `${meta.color}22` }]}>
-        <Ionicons name={meta.icon} size={18} color={meta.color} />
+    <Pressable
+      style={[styles.equipCard, on && styles.equipCardOn]}
+      onPress={onPress}>
+      <View
+        style={[
+          styles.equipIcon,
+          { backgroundColor: on ? EstufaColors.primaryMuted : `${meta.color}22` },
+        ]}>
+        <Ionicons name={meta.icon} size={18} color={on ? EstufaColors.primary : meta.color} />
       </View>
       <Text style={styles.equipTitle}>{meta.shortLabel}</Text>
       <Text style={[styles.equipStatus, on && styles.equipStatusOn]}>{on ? 'Ligada' : 'Desligada'}</Text>
@@ -59,7 +73,8 @@ export function EquipmentQuickCard({
         value={on}
         onValueChange={onToggle}
         trackColor={{ false: EstufaColors.switchTrackOff, true: EstufaColors.primary }}
-        thumbColor={EstufaColors.white}
+        thumbColor={on ? EstufaColors.primary : EstufaColors.white}
+        ios_backgroundColor={EstufaColors.switchTrackOff}
         style={styles.switch}
       />
     </Pressable>
@@ -78,9 +93,13 @@ export function EquipmentRow({
   const meta = EQUIPMENT_META[id];
 
   return (
-    <View style={styles.equipRow}>
-      <View style={[styles.equipRowIcon, { backgroundColor: `${meta.color}22` }]}>
-        <Ionicons name={meta.icon} size={26} color={meta.color} />
+    <View style={[styles.equipRow, on && styles.equipRowOn]}>
+      <View
+        style={[
+          styles.equipRowIcon,
+          { backgroundColor: on ? EstufaColors.primaryMuted : `${meta.color}22` },
+        ]}>
+        <Ionicons name={meta.icon} size={26} color={on ? EstufaColors.primary : meta.color} />
       </View>
       <View style={styles.equipRowBody}>
         <Text style={styles.equipRowTitle}>{meta.label}</Text>
@@ -91,7 +110,8 @@ export function EquipmentRow({
         value={on}
         onValueChange={onToggle}
         trackColor={{ false: EstufaColors.switchTrackOff, true: EstufaColors.primary }}
-        thumbColor={EstufaColors.white}
+        thumbColor={on ? EstufaColors.primary : EstufaColors.white}
+        ios_backgroundColor={EstufaColors.switchTrackOff}
       />
     </View>
   );
@@ -127,6 +147,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
+  sensorSubtitle: {
+    color: EstufaColors.textMuted,
+    fontSize: 11,
+    marginTop: -4,
+  },
   equipCard: {
     flex: 1,
     backgroundColor: EstufaColors.surface,
@@ -134,6 +159,12 @@ const styles = StyleSheet.create({
     padding: Spacing.three,
     gap: 6,
     alignItems: 'flex-start',
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  equipCardOn: {
+    backgroundColor: EstufaColors.primaryMuted,
+    borderColor: 'rgba(74, 222, 128, 0.45)',
   },
   equipIcon: {
     width: 36,
@@ -165,6 +196,12 @@ const styles = StyleSheet.create({
     backgroundColor: EstufaColors.surface,
     borderRadius: Radius.lg,
     padding: Spacing.three,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  equipRowOn: {
+    backgroundColor: EstufaColors.primaryMuted,
+    borderColor: 'rgba(74, 222, 128, 0.45)',
   },
   equipRowIcon: {
     width: 52,

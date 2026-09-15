@@ -56,10 +56,19 @@ export const CURRENT_SENSORS: Record<SensorKey, { value: number; sparkline: numb
 };
 
 export const CHART_SERIES: Record<SensorKey, number[]> = {
-  temperatura: [24.2, 23.8, 23.1, 23.5, 24.8, 26.1, 27.4, 28.9, 30.2, 31.5, 32.4, 31.8, 30.5, 29.2, 28.4, 27.8, 27.1, 26.5, 26.8, 27.2, 27.9, 28.3, 28.0, 27.6],
-  umidadeAr: [70, 69, 68, 67, 66, 64, 62, 60, 58, 57, 56, 58, 60, 62, 64, 65, 66, 67, 68, 67, 66, 65, 65, 64],
-  umidadeSolo: [55, 54, 54, 53, 53, 52, 51, 50, 50, 49, 48, 48, 49, 50, 51, 52, 53, 53, 54, 54, 53, 53, 53, 52],
-  luminosidade: [5, 5, 8, 15, 28, 42, 55, 68, 78, 85, 90, 92, 91, 88, 82, 74, 62, 48, 32, 18, 10, 6, 5, 5],
+  temperatura: [
+    24.2, 23.8, 23.1, 23.5, 24.8, 26.1, 27.4, 28.9, 30.2, 31.5, 32.4, 31.8, 30.5, 29.2, 28.4, 27.8,
+    27.1, 26.5, 26.8, 27.2, 27.9, 28.3, 28.0, 27.6,
+  ],
+  umidadeAr: [
+    70, 69, 68, 67, 66, 64, 62, 60, 58, 57, 56, 58, 60, 62, 64, 65, 66, 67, 68, 67, 66, 65, 65, 64,
+  ],
+  umidadeSolo: [
+    55, 54, 54, 53, 53, 52, 51, 50, 50, 49, 48, 48, 49, 50, 51, 52, 53, 53, 54, 54, 53, 53, 53, 52,
+  ],
+  luminosidade: [
+    5, 5, 8, 15, 28, 42, 55, 68, 78, 85, 90, 92, 91, 88, 82, 74, 62, 48, 32, 18, 10, 6, 5, 5,
+  ],
 };
 
 export const CHART_STATS: Record<SensorKey, { avg: number; min: number; max: number }> = {
@@ -129,5 +138,5 @@ export const EQUIPMENT_META: Record<
   },
 };
 
-export const TIME_RANGES = ['1h', '6h', '24h', '7 dias'] as const;
+export const TIME_RANGES = ['1h', '6h', '7 dias', '24h'] as const;
 export type TimeRange = (typeof TIME_RANGES)[number];

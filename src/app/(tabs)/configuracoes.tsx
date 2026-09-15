@@ -9,19 +9,33 @@ import { useEstufa } from '@/context/estufa-context';
 
 export default function ConfiguracoesScreen() {
   const insets = useSafeAreaInsets();
-  const { greenhouseName, deviceId, isOnline, lastUpdate, setOnline } = useEstufa();
+  const {
+    greenhouseName,
+    deviceId,
+    isOnline,
+    lastUpdate,
+    btSupported,
+    error,
+    disconnect,
+    sensors,
+    refreshSensors,
+    refreshing,
+  } = useEstufa();
 
   const copyDeviceId = () => {
     Alert.alert('ID do dispositivo', deviceId);
   };
 
-  const toggleConnection = () => {
-    if (isOnline) {
-      setOnline(false);
-      router.replace('/offline');
+  const forceSensorRefresh = () => {
+    if (!isOnline) {
+      Alert.alert('Offline', 'Conecte a estufa para pedir STATUS.');
       return;
     }
-    setOnline(true);
+    void refreshSensors()
+      .then(() => Alert.alert('Sensores', 'Pedido STATUS enviado.'))
+      .catch((err) =>
+        Alert.alert('Erro', err instanceof Error ? err.message : 'Falha ao atualizar')
+      );
   };
 
   return (
@@ -47,12 +61,65 @@ export default function ConfiguracoesScreen() {
           />
           <SettingsRow
             label="Status da Conexão"
-            value={isOnline ? 'Online' : 'Offline'}
+            value={isOnline ? 'Conectada' : 'Desconectada'}
             valueColor={isOnline ? EstufaColors.online : EstufaColors.offline}
-            onPress={toggleConnection}
+            onPress={() => {
+              router.push('/offline');
+            }}
           />
           <SettingsRow label="Última Atualização" value={lastUpdate} last />
         </Section>
+
+        <Section title="Sensores (ao vivo)">
+          <SettingsRow
+            label="Umidade do Solo"
+            value={
+              sensors.umidadeSolo == null ? '—' : `${sensors.umidadeSolo}%`
+            }
+          />
+          <SettingsRow
+            label="Luminosidade"
+            value={
+              sensors.luminosidade == null
+                ? 'Indisponível (sem LDR)'
+                : `${sensors.luminosidade}%`
+            }
+          />
+          <SettingsRow
+            label="Atualizar sensores"
+            value={refreshing ? 'Pedindo…' : 'Enviar STATUS'}
+            onPress={forceSensorRefresh}
+            last
+          />
+        </Section>
+
+        <Section title="Conexão">
+          <SettingsRow
+            label="Bluetooth"
+            value={btSupported ? 'Pronto' : 'Indisponível'}
+            valueColor={btSupported ? EstufaColors.online : EstufaColors.light}
+          />
+          <SettingsRow
+            label={isOnline ? 'Trocar estufa' : 'Conectar estufa'}
+            value="Abrir tela de conexão"
+            onPress={() => router.push('/offline')}
+          />
+          <SettingsRow
+            label="Desconectar"
+            value={isOnline ? 'Toque para sair' : '—'}
+            onPress={() => {
+              if (!isOnline) return;
+              void disconnect().then(() => router.replace('/offline'));
+            }}
+            last
+          />
+        </Section>
+
+        {error ? (
+          <View style={styles.errorBox}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        ) : null}
 
         <Section title="Aparência">
           <SettingsRow
@@ -67,13 +134,6 @@ export default function ConfiguracoesScreen() {
           <SettingsRow label="Versão do App" value="1.0.0" />
           <SettingsRow label="Desenvolvido por" value="Estufa Inteligente" last />
         </Section>
-
-        <Pressable
-          style={styles.logoutBtn}
-          onPress={() => Alert.alert('Sair', 'Sessão encerrada (demo).')}>
-          <Ionicons name="log-out-outline" size={20} color={EstufaColors.danger} />
-          <Text style={styles.logoutText}>Sair</Text>
-        </Pressable>
       </ScrollView>
     </View>
   );
@@ -178,23 +238,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    flexShrink: 1,
   },
   rowValue: {
     color: EstufaColors.textSecondary,
     fontSize: 14,
+    flexShrink: 1,
+    textAlign: 'right',
+    maxWidth: 220,
   },
-  logoutBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
+  errorBox: {
     backgroundColor: EstufaColors.dangerMuted,
     borderRadius: Radius.lg,
-    paddingVertical: 16,
+    padding: Spacing.three,
   },
-  logoutText: {
+  errorText: {
     color: EstufaColors.danger,
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 13,
+    lineHeight: 18,
   },
 });

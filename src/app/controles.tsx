@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EquipmentRow } from '@/components/estufa/cards';
-import { EstufaColors, Radius, Spacing } from '@/constants/theme';
+import { EstufaColors, Spacing } from '@/constants/theme';
 import { useEstufa } from '@/context/estufa-context';
 import { EQUIPMENT_META } from '@/data/mock';
 
@@ -33,22 +33,11 @@ export default function ControlesScreen() {
               key={id}
               id={id}
               on={equipment[id]}
-              onToggle={(value) => setEquipment(id, value)}
+              onToggle={(value) => {
+                void setEquipment(id, value);
+              }}
             />
           ))}
-        </View>
-
-        <View style={styles.autoCard}>
-          <View style={styles.autoIcon}>
-            <Ionicons name="hardware-chip-outline" size={24} color={EstufaColors.primary} />
-          </View>
-          <View style={styles.autoBody}>
-            <Text style={styles.autoTitle}>Modo Automático (em breve)</Text>
-            <Text style={styles.autoDesc}>
-              Em breve a estufa poderá ajustar irrigação, luz e ventilação sozinha com base nos
-              sensores.
-            </Text>
-          </View>
         </View>
       </ScrollView>
     </View>
@@ -94,36 +83,5 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: Spacing.two + 2,
-  },
-  autoCard: {
-    flexDirection: 'row',
-    gap: Spacing.three,
-    backgroundColor: EstufaColors.primaryMuted,
-    borderRadius: Radius.xl,
-    padding: Spacing.three,
-    borderWidth: 1,
-    borderColor: 'rgba(74, 222, 128, 0.25)',
-  },
-  autoIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: Radius.md,
-    backgroundColor: 'rgba(74, 222, 128, 0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  autoBody: {
-    flex: 1,
-    gap: 6,
-  },
-  autoTitle: {
-    color: EstufaColors.primary,
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  autoDesc: {
-    color: EstufaColors.textSecondary,
-    fontSize: 13,
-    lineHeight: 18,
   },
 });

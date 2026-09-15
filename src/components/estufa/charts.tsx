@@ -49,14 +49,17 @@ export function LineChart({
   const chartW = width - paddingX * 2;
   const chartH = height - paddingY * 2 - 20;
 
-  if (data.length < 2) return null;
+  if (data.length === 0) return null;
 
-  const min = Math.min(...data);
-  const max = Math.max(...data);
+  // Uma única leitura: desenha ponto central (comum no filtro 1h com sync horário).
+  const series = data.length === 1 ? [data[0], data[0]] : data;
+
+  const min = Math.min(...series);
+  const max = Math.max(...series);
   const range = max - min || 1;
-  const stepX = chartW / (data.length - 1);
+  const stepX = chartW / (series.length - 1);
 
-  const coords = data.map((value, index) => {
+  const coords = series.map((value, index) => {
     const x = paddingX + index * stepX;
     const y = paddingY + (chartH - ((value - min) / range) * chartH);
     return { x, y };
@@ -86,11 +89,10 @@ export function LineChart({
       <Circle cx={last.x} cy={last.y} r={5} fill={color} />
       <Circle cx={last.x} cy={last.y} r={9} fill={color} opacity={0.25} />
       {labels.map((label, index) => {
-        const x = paddingX + (index / (labels.length - 1)) * chartW;
+        const x = paddingX + (index / Math.max(labels.length - 1, 1)) * chartW;
         return (
           <Path
-            key={label}
-            // invisible anchors — labels rendered below via sibling Text for simplicity
+            key={`${label}-${index}`}
             d={`M ${x} ${height - 4}`}
             stroke="transparent"
           />
